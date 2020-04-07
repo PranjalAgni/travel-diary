@@ -3,7 +3,8 @@ const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const compression = require('compression');
-const mongoose = require('mongoose');
+const db = require('./utils/db');
+
 require('dotenv').config();
 
 const middlewares = require('./middlewares');
@@ -11,15 +12,27 @@ const logs = require('./api/logs');
 
 const app = express();
 
-mongoose.connect(process.env.MONGODB_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
-
+db.connectDB();
 app.use(express.json());
 app.use(morgan('common'));
-app.use(helmet());
-app.use(cors());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"]
+      }
+    }
+  })
+);
+
+app.use(
+  cors({
+    origin: 'http://localhost:4040',
+    methods: ['GET', 'POST'],
+    credentials: true
+  })
+);
+
 app.use(compression());
 
 app.get('/', (req, res) => {
