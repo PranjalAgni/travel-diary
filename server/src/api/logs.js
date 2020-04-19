@@ -2,11 +2,11 @@ const { Router } = require('express');
 const rateLimit = require('express-rate-limit');
 const MongoStore = require('rate-limit-mongo');
 
-const LogEntry = require('../models/LogEntry');
+const SpotLog = require('../models/SpotLog');
 
 const router = Router();
 
-const rateTimeDelay = 20 * 1000; // 20 sec
+const rateTimeDelay = process.env.NODE_ENV === 'production' ? 20 * 1000 : 1; // 20 sec
 const createLogsLimiter = rateLimit({
   store: new MongoStore({
     uri: process.env.MONGODB_URL,
@@ -18,8 +18,8 @@ const createLogsLimiter = rateLimit({
 
 router.get('/', async (req, res, next) => {
   try {
-    const logEntries = await LogEntry.find();
-    res.json(logEntries);
+    const spotLogs = await SpotLog.find();
+    res.json(spotLogs);
   } catch (error) {
     if (error.name === 'ValidationError') res.status(422);
     next(error);
@@ -28,8 +28,8 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', createLogsLimiter, async (req, res, next) => {
   try {
-    const logEntry = new LogEntry(req.body);
-    const createdEntry = await logEntry.save();
+    const spotLog = new SpotLog(req.body);
+    const createdEntry = await spotLog.save();
     res.json(createdEntry);
   } catch (error) {
     if (error.name === 'ValidationError') res.status(422);
@@ -41,13 +41,13 @@ router.get('/date', async (req, res, next) => {
   try {
     const endDate = new Date();
     const startDate = new Date(2020, 01, 15);
-    const logEntryByDate = await LogEntry.find({
+    const spotLogEntry = await SpotLog.find({
       visitDate: {
         $gte: startDate,
         $lte: endDate
       }
     }).lean();
-    res.json(logEntryByDate);
+    res.json(spotLogEntry);
   } catch (error) {
     if (error.name === 'ValidationError') res.status(422);
     next(error);
