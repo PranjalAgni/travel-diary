@@ -7,36 +7,50 @@ const requiredNumber = {
   required: true
 };
 
-const logEntrySchema = new Schema(
+const spotLogSchema = new Schema(
   {
     title: {
       type: String,
       required: true
     },
-    description: String,
-    comments: String,
-    rating: {
-      type: Number,
-      min: 0,
-      max: 10,
-      default: 0
-    },
-    image: String,
+
     visitDate: {
       required: true,
       type: Date
     },
+
+    address: {
+      type: String,
+      required: true
+    },
+
     latitude: {
       ...requiredNumber,
       unique: true,
       min: -90,
       max: 90
     },
+
     longitude: {
       ...requiredNumber,
       unique: true,
       min: -180,
       max: 180
+    },
+
+    description: String,
+
+    rating: {
+      type: Number,
+      min: 0,
+      max: 10,
+      default: 0
+    },
+
+    image: String,
+
+    emoji: {
+      type: String
     }
   },
   {
@@ -44,6 +58,6 @@ const logEntrySchema = new Schema(
   }
 );
 
-const LogEntry = mongoose.model('LogEntry', logEntrySchema);
+const SpotLog = mongoose.model('SpotLog', spotLogSchema);
 
-module.exports = LogEntry;
+module.exports = SpotLog;
