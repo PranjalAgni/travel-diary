@@ -10,7 +10,7 @@ function connectDB() {
 }
 
 mongoose.connection.on('error', function (err) {
-  console.log('Error connecting to DB: ', err);
+  console.log('Error connecting to DB: ', err.stack);
 });
 
 mongoose.connection.on('disconnected', function () {
