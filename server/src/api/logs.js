@@ -3,6 +3,7 @@ const rateLimit = require('express-rate-limit');
 const MongoStore = require('rate-limit-mongo');
 
 const SpotLog = require('../models/SpotLog');
+const { formatResponse } = require('../utils/responseFormatter');
 
 const router = Router();
 
@@ -19,7 +20,7 @@ const createLogsLimiter = rateLimit({
 router.get('/', async (req, res, next) => {
   try {
     const spotLogs = await SpotLog.find();
-    res.json(spotLogs);
+    formatResponse(res, spotLogs);
   } catch (error) {
     if (error.name === 'ValidationError') res.status(422);
     next(error);
@@ -30,7 +31,7 @@ router.post('/', createLogsLimiter, async (req, res, next) => {
   try {
     const spotLog = new SpotLog(req.body);
     const createdEntry = await spotLog.save();
-    res.json(createdEntry);
+    formatResponse(res, createdEntry);
   } catch (error) {
     if (error.name === 'ValidationError') res.status(422);
     next(error);
@@ -47,7 +48,7 @@ router.get('/date', async (req, res, next) => {
         $lte: endDate
       }
     }).lean();
-    res.json(spotLogEntry);
+    formatResponse(res, spotLogEntry);
   } catch (error) {
     if (error.name === 'ValidationError') res.status(422);
     next(error);
