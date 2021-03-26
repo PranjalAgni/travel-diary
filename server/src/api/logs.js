@@ -3,7 +3,7 @@ const rateLimit = require('express-rate-limit');
 const MongoStore = require('rate-limit-mongo');
 
 const SpotLog = require('../models/SpotLog');
-const { formatResponse } = require('../utils/responseFormatter');
+const { formatResponse, asyncHandler } = require('../utils/express');
 
 const router = Router();
 
@@ -17,29 +17,27 @@ const createLogsLimiter = rateLimit({
   max: 100
 });
 
-router.get('/', async (req, res, next) => {
-  try {
+router.get(
+  '/',
+  asyncHandler(async (req, res, next) => {
     const spotLogs = await SpotLog.find();
-    formatResponse(res, spotLogs);
-  } catch (error) {
-    if (error.name === 'ValidationError') res.status(422);
-    next(error);
-  }
-});
+    return formatResponse(res, spotLogs);
+  })
+);
 
-router.post('/', createLogsLimiter, async (req, res, next) => {
-  try {
+router.post(
+  '/',
+  createLogsLimiter,
+  asyncHandler(async (req, res, next) => {
     const spotLog = new SpotLog(req.body);
     const createdEntry = await spotLog.save();
-    formatResponse(res, createdEntry);
-  } catch (error) {
-    if (error.name === 'ValidationError') res.status(422);
-    next(error);
-  }
-});
+    return formatResponse(res, createdEntry);
+  })
+);
 
-router.get('/date', async (req, res, next) => {
-  try {
+router.get(
+  '/date',
+  asyncHandler(async (req, res, next) => {
     const endDate = new Date();
     const startDate = new Date(2020, 01, 15);
     const spotLogEntry = await SpotLog.find({
@@ -48,11 +46,9 @@ router.get('/date', async (req, res, next) => {
         $lte: endDate
       }
     }).lean();
-    formatResponse(res, spotLogEntry);
-  } catch (error) {
-    if (error.name === 'ValidationError') res.status(422);
-    next(error);
-  }
-});
+
+    return formatResponse(res, spotLogEntry);
+  })
+);
 
 module.exports = router;
