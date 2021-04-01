@@ -1,12 +1,10 @@
+const Users = require('../models/Users');
+
 const Mutation = {
-  createBook(parent, args, { store }) {
-    const { author, title } = args.data;
-    store.push({
-      id: store.length + 1,
-      author,
-      title
-    });
-    return store[store.length - 1];
+  async createUser(parent, args, ctx) {
+    const user = new Users(args.data);
+    const createdUser = await user.save();
+    return createdUser.toObject();
   }
 };
 

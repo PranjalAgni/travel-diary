@@ -1,37 +1,42 @@
 type Query {
-  books: [Book]!
+  getUser(id: ID!): User
+  getUsers: [User]
 }
 
 type Mutation {
-  createBook(data: CreateBookInput!): Book!
+  createUser(data: CreateUserInput!): User!
 }
 
-type Book {
-  id: ID!
+type User {
+  _id: ID!
+  name: String!
+  email: String!
+  birthDate: String!
+  tokens: [Token!]
+  spot: [Spot]
   author: String!
   title: String!
 }
 
-input CreateBookInput {
-  author: String!
+type Spot {
   title: String!
+  visitDate: String!
+  address: String!
+  latitude: Int!
+  longitude: Int!
+  description: String
+  rating: Int
+  image: String
+  emoji: String
 }
 
-# type Query {
-#   books: [Book]!
-# }
+type Token {
+  token: String
+}
 
-# type Book {
-#   id: ID!
-#   title: string!
-#   author: string!
-# }
-
-# type Mutation {
-#   addBook(AddBookInput!): Book!
-# }
-
-# input AddBookInput {
-#   title: String!
-#   author: String!
-# }
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
+  birthDate: String!
+}
