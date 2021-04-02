@@ -5,6 +5,7 @@ type Query {
 
 type Mutation {
   createUser(data: CreateUserInput!): User!
+  login(data: LoginUserInput!): User
 }
 
 type User {
@@ -39,4 +40,9 @@ input CreateUserInput {
   email: String!
   password: String!
   birthDate: String!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
 }
