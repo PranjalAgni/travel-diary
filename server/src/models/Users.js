@@ -49,6 +49,10 @@ const usersSchema = new Schema(
         token: {
           type: String,
           required: true
+        },
+        device: {
+          type: String,
+          required: true
         }
       }
     ],
