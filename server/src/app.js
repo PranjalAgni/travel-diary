@@ -29,6 +29,7 @@ const initApp = async () => {
 
   const app = server.express;
 
+  console.log('app is starting');
   await db.connectDB();
   app.use(express.json());
   app.use(morgan('common'));
